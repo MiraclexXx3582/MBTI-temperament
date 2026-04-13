@@ -1,1 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Temperament · Figma to CSS</title>
+    <!-- Judson from Google Fonts (matches Figma) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Judson:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* RESET & GLOBAL */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            background: #1D053A;  /* fallback, main gradient overlay will cover */
+            font-family: 'Judson', serif;
+            font-weight: 400;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* MAIN CONTAINER — exactly 1440px wide, centered, relative.
+           height follows content (2331px in design, we use min-height for safety) */
+        .frame {
+            position: relative;
+            width: 1440px;
+            max-width: 100%;
+            min-height: 2331px;
+            background: linear-gradient(181.18deg, rgba(204, 116, 104, 0.2) -17.14%, rgba(104, 132, 204, 0.2) 129.5%), #1D053A;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            /* ensures stacking context for all absolute layers */
+            isolation: isolate;
+            overflow-x: hidden;
+        }
+
+        /* ------ ALL ABSOLUTE ELEMENTS (exact Figma positions, sizes, transforms) ------ */
+        .abs-layer {
+            position: absolute;
+            pointer-events: none;  /* let text / buttons be clickable if needed, but we keep exact layout */
+        }
+
+        /* background vector shapes */
+        .bg-vector-18-top {
+            width: 1440px;
+            height: 452px;
+            left: 0;
+            top: 17px;
+            background: #68CCC0;
+        }
+
+        .bg-vector-18-mid {
+            width: 1440px;
+            height: 430.2px;
+            left: 0;
+            top: 469px;
+            background: #68A2CC;
+            transform: rotate(180deg);
+        }
+
+        .bg-vector-18-rotated {
+            width: 1440px;
+            height: 430.2px;
+            left: 0;
+            top: 216px;
+            background: linear-gradient(357.09deg, #68CCC0 13.44%, #68A2CC 79.05%);
+            box-shadow: 0px 4px 33px rgba(0, 0, 0, 0.25);
+            transform: rotate(180deg);
+        }
+
+        /* ----- geometric abstract group (Group 4) ----- */
+        .group4-wrapper {
+            position: absolute;
+            width: 550px;
+            height: 500px;
+            left: 445px;
+            top: 46px;
+            pointer-events: none;
+        }
+
+        /* each vector inside group4 uses exact left/top relative to .frame, but we place them absolutely */
+        .vec16 {
+            width: 187.35px;
+            height: 174.7px;
+            left: 469.27px;
+            top: 87.94px;
+            background: #000000;
+            opacity: 0.64;
+            border: 13px solid #000000;
+            transform: matrix(-0.81, -0.59, 0.66, -0.75, 0, 0);
+            position: absolute;
+        }
+
+        .vec10-large {
+            width: 368.67px;
+            height: 378.94px;
+            left: 445px;
+            top: 46px;
+            background: #000000;
+            opacity: 0.64;
+            border: 13px solid #000000;
+            transform: matrix(0.81, 0.59, -0.66, 0.75, 0, 0);
+            position: absolute;
+        }
+
+        .rect6 {
+            width: 61.62px;
+            height: 105.37px;
+            left: 810.55px;
+            top: 232.29px;
+            background: #C5CC68;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            transform: matrix(0.94, 0.35, -0.42, 0.91, 0, 0);
+            position: absolute;
+        }
+
+        .rect7 {
+            width: 90.4px;
+            height: 67.41px;
+            left: 492.8px;
+            top: 284.93px;
+            background: #68CCC0;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            transform: matrix(0.97, -0.26, 0.31, 0.95, 0, 0);
+            position: absolute;
+        }
+
+        .rect8 {
+            width: 101.14px;
+            height: 84.06px;
+            left: 627.35px;
+            top: 162.38px;
+            background: #CC7468;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            transform: matrix(0.56, 0.83, -0.87, 0.48, 0, 0);
+            position: absolute;
+        }
+
+        .vec1 {
+            width: 114.63px;
+            height: 138.28px;
+            left: 513.77px;
+            top: 221.65px;
+            background: #000000;
+            border: 1px solid #000000;
+            position: absolute;
+        }
+
+        .vec2 {
+            width: 45.91px;
+            height: 89.35px;
+            left: 539.35px;
+            top: 243.35px;
+            border: 13px solid #74FFEF;
+            box-shadow: 8px 4px 0px rgba(56, 233, 224, 0.25);
+            transform: matrix(0.98, 0.17, -0.21, 0.98, 0, 0);
+            position: absolute;
+            background: transparent;
+        }
+
+        .vec3 {
+            width: 105.31px;
+            height: 175px;
+            left: 590.19px;
+            top: 174.56px;
+            background: #000000;
+            border: 13px solid #000000;
+            transform: matrix(0.99, -0.12, 0.15, 0.99, 0, 0);
+            position: absolute;
+        }
+
+        .vec4 {
+            width: 57.95px;
+            height: 72.65px;
+            left: 617.41px;
+            top: 237.98px;
+            border: 13px solid #74FFEF;
+            box-shadow: 8px 4px 0px rgba(56, 233, 224, 0.25);
+            transform: matrix(0.99, -0.15, 0.19, 0.98, 0, 0);
+            position: absolute;
+        }
+
+        .vec9 {
+            width: 95.26px;
+            height: 125.94px;
+            left: 755.6px;
+            top: 190.18px;
+            background: #000000;
+            border: 13px solid #000000;
+            transform: matrix(-0.89, 0.45, 0.52, 0.85, 0, 0);
+            position: absolute;
+        }
+
+        .union {
+            width: 50.92px;
+            height: 69.14px;
+            left: 795.51px;
+            top: 234.84px;
+            background: #74FFEF;
+            box-shadow: 8px 4px 0px rgba(56, 233, 224, 0.25);
+            transform: matrix(0.98, 0.18, -0.22, 0.98, 0, 0);
+            position: absolute;
+        }
+
+        .vec10-small {
+            width: 27.99px;
+            height: 50.12px;
+            left: 809.95px;
+            top: 245.87px;
+            border: 13px solid #74FFEF;
+            border-radius: 5px;
+            transform: matrix(0.99, -0.15, 0.19, 0.98, 0, 0);
+            position: absolute;
+        }
+
+        .vec11 {
+            width: 25.38px;
+            height: 8.55px;
+            left: 819.93px;
+            top: 292.2px;
+            border: 13px solid #74FFEF;
+            border-radius: 5px;
+            transform: matrix(0.98, 0.18, -0.22, 0.98, 0, 0);
+            position: absolute;
+        }
+
+        .rect12 {
+            width: 72.01px;
+            height: 45.25px;
+            left: 712.15px;
+            top: 296.68px;
+            background: #6884CC;
+            box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+            transform: matrix(0.9, 0.43, -0.5, 0.87, 0, 0);
+            position: absolute;
+        }
+
+        .vec5 {
+            width: 92.03px;
+            height: 120.9px;
+            left: 683.36px;
+            top: 204.38px;
+            background: #000000;
+            border: 13px solid #000000;
+            transform: matrix(0.99, -0.13, 0.14, 0.99, 0, 0);
+            position: absolute;
+        }
+
+        .vec6 {
+            width: 54.96px;
+            height: 67.1px;
+            left: 711.88px;
+            top: 222.79px;
+            border: 13px solid #74FFEF;
+            box-shadow: 8px 4px 0px rgba(56, 233, 224, 0.25);
+            transform: matrix(0.94, -0.35, 0.38, 0.93, 0, 0);
+            position: absolute;
+        }
+
+        /* Lower vectors */
+        .vector19 {
+            width: 1440px;
+            height: 411.27px;
+            left: 0px;
+            top: 1094.73px;
+            background: #CC7468;
+            transform: matrix(-1, 0, 0, 1, 0, 0);
+        }
+
+        .vector20 {
+            width: 1440px;
+            height: 430.2px;
+            left: 0px;
+            top: 1506px;
+            background: #C5CC68;
+            transform: matrix(1, 0, 0, -1, 0, 0);
+        }
+
+        .vector18-gradient2 {
+            width: 1440px;
+            height: 430.2px;
+            left: 0px;
+            top: 1253px;
+            background: linear-gradient(0deg, #CC7468 22.78%, #C5CC68 69.62%);
+            box-shadow: 0px 4px 33px rgba(0, 0, 0, 0.25);
+            transform: matrix(1, 0, 0, -1, 0, 0);
+        }
+
+        /* ----- TYPOGRAPHY (positioned absolutely) ----- */
+        .text-temperament-def {
+            width: 1444px;
+            left: 30px;
+            top: 582px;
+            font-size: 64px;
+            line-height: 74px;
+            color: #FFFFFF;
+            opacity: 0.25;
+            font-family: 'Judson', serif;
+            font-weight: 400;
+            position: absolute;
+        }
+
+        .temperaments-main {
+            width: 1021px;
+            left: 503px;
+            top: 380px;
+            font-size: 64px;
+            line-height: 74px;
+            color: rgba(0, 0, 0, 0.8);
+            font-family: 'Judson', serif;
+            position: absolute;
+        }
+
+        .temperaments-shadow {
+            width: 1021px;
+            left: 503px;
+            top: 413px;
+            font-size: 64px;
+            line-height: 74px;
+            color: rgba(0, 0, 0, 0.15);
+            transform: matrix(1, 0, 0, -1, 0, 0);
+            font-family: 'Judson', serif;
+            position: absolute;
+        }
+
+        .authors {
+            width: 1444px;
+            left: 36px;
+            top: 1927px;
+            font-size: 64px;
+            line-height: 74px;
+            color: #FFFFFF;
+            opacity: 0.48;
+            font-family: 'Judson', serif;
+            position: absolute;
+        }
+
+        /* ----- FRAMES (dark cards) ----- */
+        .card-left, .card-right {
+            position: absolute;
+            width: 500px;
+            height: 650px;
+            top: 1158px;
+            background: #000826;
+            border-radius: 35px;
+            font-family: 'Judson', serif;
+            color: #FFFFFF;
+        }
+        .card-left {
+            left: 141px;
+        }
+        .card-right {
+            left: 799px;
+        }
+        .card-title {
+            position: absolute;
+            width: 421px;
+            left: 39px;
+            top: 38px;
+            font-size: 64px;
+            line-height: 74px;
+            font-weight: 400;
+            color: #FFFFFF;
+        }
+
+        /* ----- BUTTONS (Start Test) + group rectangles ----- */
+        .group5-top {
+            position: absolute;
+            width: 480px;
+            height: 125px;
+            left: 512px;
+            top: 496px;
+        }
+        .rect19-top {
+            position: absolute;
+            width: 400px;
+            height: 125px;
+            left: 512px;
+            top: 496px;
+            background: linear-gradient(180deg, #3DD778 -176%, #37C06B -77.79%, #68A2CC 305.93%);
+            box-shadow: 0px 4px 22.8px rgba(0, 0, 0, 0.25);
+            border-radius: 20px;
+        }
+        .start-test-top {
+            position: absolute;
+            width: 421px;
+            left: 571px;
+            top: 519px;
+            font-size: 64px;
+            line-height: 74px;
+            color: #FFFFFF;
+            font-family: 'Judson', serif;
+            text-align: left;
+        }
+
+        .group5-bottom {
+            position: absolute;
+            width: 480px;
+            height: 125px;
+            left: 518px;
+            top: 1835px;
+        }
+        .rect19-bottom {
+            position: absolute;
+            width: 400px;
+            height: 125px;
+            left: 518px;
+            top: 1835px;
+            background: linear-gradient(180deg, #3DD778 -176%, #37C06B -77.79%, #68A2CC 305.93%);
+            box-shadow: 0px 4px 22.8px rgba(0, 0, 0, 0.25);
+            border-radius: 20px;
+        }
+        .start-test-bottom {
+            position: absolute;
+            width: 421px;
+            left: 577px;
+            top: 1858px;
+            font-size: 64px;
+            line-height: 74px;
+            color: #FFFFFF;
+            font-family: 'Judson', serif;
+        }
+
+        /* make buttons clickable — override pointer-events */
+        .clickable {
+            pointer-events: auto;
+            cursor: default; /* not interactive, just visual */
+        }
+
+        /* minor adjustments for perfect match: text block uses correct line-height */
+        .temperaments-main, .temperaments-shadow, .text-temperament-def, .authors, .card-title, .start-test-top, .start-test-bottom {
+            white-space: nowrap;
+        }
+
+        /* preserve long text wrapping if needed (but design shows big width) */
+        .text-temperament-def {
+            white-space: normal;
+            word-wrap: break-word;
+            opacity: 0.25;
+        }
+
+        /* small fix: matrix on some elements may shift rendering, we trust the values */
+        /* Ensure all absolute elements respect 1440px width */
+        @media (max-width: 1440px) {
+            .frame {
+                width: 100%;
+            }
+        }
+        /* For mobile / smaller, we keep proportions, but because absolute left values are fixed, 
+           the design stays as per figma. It's responsive by viewport scaling. */
+    </style>
+</head>
+<body>
+<div class="frame">
+
+    <!-- VECTOR BACKGROUNDS (order based on figma z-index, bottom first) -->
+    <div class="abs-layer bg-vector-18-top"></div>
+    <div class="abs-layer bg-vector-18-mid"></div>
+    <div class="abs-layer bg-vector-18-rotated"></div>
+
+    <!-- GROUP 4 abstract composition -->
+    <!-- vec10-large (background dark shape) -->
+    <div class="abs-layer vec10-large"></div>
+    <!-- vec16 -->
+    <div class="abs-layer vec16"></div>
+    <!-- colored rectangles -->
+    <div class="abs-layer rect6"></div>
+    <div class="abs-layer rect7"></div>
+    <div class="abs-layer rect8"></div>
+    <!-- vector shapes -->
+    <div class="abs-layer vec1"></div>
+    <div class="abs-layer vec2"></div>
+    <div class="abs-layer vec3"></div>
+    <div class="abs-layer vec4"></div>
+    <div class="abs-layer vec9"></div>
+    <div class="abs-layer union"></div>
+    <div class="abs-layer vec10-small"></div>
+    <div class="abs-layer vec11"></div>
+    <div class="abs-layer rect12"></div>
+    <div class="abs-layer vec5"></div>
+    <div class="abs-layer vec6"></div>
+
+    <!-- Lower vector bands -->
+    <div class="abs-layer vector19"></div>
+    <div class="abs-layer vector20"></div>
+    <div class="abs-layer vector18-gradient2"></div>
+
+    <!-- TYPOGRAPHY LAYERS -->
+    <div class="abs-layer text-temperament-def">
+        Temperament refers to the biologically rooted part of an individual's personality. It encompasses the innate traits, natural predispositions, and characteristic patterns of reaction that define a person's fundamental nature. Unlike character, which is shaped by upbringing and moral choices, or personality, which is the complex result of social experience, temperament is considered the "foundation" of the psyche. It determines the general tempo, intensity, and energy of behavior—such as how quickly a person reacts, their level of emotional sensitivity, and their capacity for endurance. It is present from birth and remains relatively stable throughout a lifetime.
+    </div>
+
+    <div class="abs-layer temperaments-main">Temperaments</div>
+    <div class="abs-layer temperaments-shadow">Temperaments</div>
+    <div class="abs-layer authors">AUTOR’S:</div>
+
+    <!-- DARK CARDS -->
+    <div class="card-left">
+        <div class="card-title">Analysts (NT)</div>
+    </div>
+    <div class="card-right">
+        <div class="card-title">Analysts (NT)</div>
+    </div>
+
+    <!-- TOP BUTTON GROUP -->
+    <div class="abs-layer rect19-top clickable"></div>
+    <div class="abs-layer start-test-top clickable">Start Test</div>
+
+    <!-- BOTTOM BUTTON GROUP -->
+    <div class="abs-layer rect19-bottom clickable"></div>
+    <div class="abs-layer start-test-bottom clickable">Start Test</div>
+
+    <!-- additional hidden group wrappers not needed; everything is absolute -->
+
+    <!-- Ensure the exact overlay text doesn't get hidden by opacity issues -->
+</div>
+<!-- Explanation: pixel-perfect recreation from Figma specs, using absolute positioning. 
+     All matrix transforms applied as written. Adaptive: width 100% on smaller screens. -->
+</body>
+</html>
